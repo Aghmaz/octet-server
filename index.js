@@ -42,9 +42,34 @@ app.get("/items/:id", (req, res) => {
   const items = readData();
   const item = items.find((i) => i.id == req.params.id);
   if (!item) {
-    res.status(404).json({ message: "item not found" });
+    return res.status(404).json({ message: "item not found" });
   }
   res.status(200).json(item);
+});
+
+// update (PUT) update item by ID
+app.put("/items/:id", (req, res) => {
+  const items = readData();
+  const index = items.findIndex((i) => i.id == req.params.id);
+  if (!index) {
+    return res.status(404).json({ message: "item not found" });
+  }
+  items[index] = { ...items[index], ...req.body };
+  writeData(items);
+  res.status(200).json(items[index]);
+});
+
+// delete - delete item by id
+app.delete("/items/:id", (req, res) => {
+  const items = readData();
+  const index = items.findIndex((i) => i.id == req.params.id);
+  if (index == -1) {
+    return res.status(404).json({ message: "item not found" });
+  }
+  const deleted = items[index];
+  items.splice(index, 1);
+  writeData(items);
+  res.status(200).json(deleted);
 });
 
 // backend port defined.
