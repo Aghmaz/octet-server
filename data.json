@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "id": 1757780732349,
+    "name": "huzaifa",
+    "age": "21",
+    "university": "FAST",
+    "discipline": "Software Engineer"
+  },
+  {
+    "id": 1757781012433,
+    "name": "shahzaib",
+    "age": "21",
+    "university": "FAST"
+  }
+]
