@@ -1,26 +1,25 @@
-import fs from "fs";
-const data_file = "data.json";
-// helper : file read
-function readData() {
-  const data = fs.readFileSync(data_file);
-  return JSON.parse(data);
-}
-// helper : file write
-function writeData(data) {
-  fs.writeFileSync(data_file, JSON.stringify(data, null, 2));
-}
+import {
+  getItemUsingId,
+  getAllItem,
+  createNewItem,
+  updateNewItem,
+  deleteNewItem,
+} from "../services/itemService";
 export const getItembyId = (req, res) => {
-  const items = readData();
-  const item = items.find((i) => i.id == req.params.id);
-  if (!item) {
+  const result = getItemUsingId({ id: req.param.id });
+  if (!result) {
     return res.status(404).json({ message: "item not found" });
   }
   res.status(200).json(item);
 };
 
 export const getItems = (req, res) => {
-  const items = readData();
-  res.status(200).json(items);
+  const result = getAllItem();
+  if (result) {
+    res.status(200).json(result);
+  } else {
+    res.status(400).json("Data not Found");
+  }
 };
 
 export const createItem = (req, res) => {
@@ -34,36 +33,24 @@ export const createItem = (req, res) => {
   if (!name || !age || !university) {
     return res.status(400).json({ message: "please pass the correct payload" });
   }
-  const items = readData();
-  const newItem = {
-    id: Date.now(),
-    name,
-    age,
-    university,
-  };
-  items.push(newItem);
-  writeData(items);
-  res.status(200).json(newItem);
+  const result = createNewItem({ name, age, university });
+  if (!result) {
+    return res.status(400).json("item not found");
+  }
+  res.status(200).json(result);
 };
 
 export const updateItem = (req, res) => {
-  const items = readData();
-  const index = items.findIndex((i) => i.id == req.params.id);
-  if (index == -1) {
-    return res.status(404).json({ message: "item not found" });
+  const result = updateNewItem({ id: req.param.id });
+  if (!result) {
+    return res.status(400).json({ message: "item not found" });
   }
-  items[index] = { ...items[index], ...req.body };
-  writeData(items);
-  res.status(200).json(items[index]);
+  res.status(200).json(result);
 };
 export const deleteItem = (req, res) => {
-  const items = readData();
-  const index = items.findIndex((i) => i.id == req.params.id);
-  if (index == -1) {
-    return res.status(404).json({ message: "item not found" });
+  const result = deleteNewItem({ id: req.param.id });
+  if (!result) {
+    return res.status(400).json({ message: "item not deleted" });
   }
-  const deleted = items[index];
-  items.splice(index, 1);
-  writeData(items);
   res.status(200).json(deleted);
 };
